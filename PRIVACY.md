@@ -54,4 +54,4 @@ Squirrel is free and open-source software. You are encouraged to inspect, review
 ## 6. Contact & Support
 
 If you have questions or concerns about this Privacy Policy or Squirrel's data handling practices, please open an issue on the official GitHub repository:
-- **GitHub Repository:** [https://github.com/ardagulbay/Squirrel](https://github.com/ardagulbay/Squirrel) (or your fork's issues page)
+- **GitHub Repository:** [https://github.com/ArdaGl1/Squirrel](https://github.com/ArdaGl1/Squirrel) (or your fork's issues page)

@@ -51,6 +51,10 @@
       "runAfterFinish": true
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArdaGl1/Squirrel.git"
+  },
   "keywords": [
     "squirrel",
     "drive-sync",

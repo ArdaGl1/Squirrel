@@ -5,7 +5,7 @@ const { app, shell } = require('electron');
 const { spawn } = require('child_process');
 
 class UpdaterService {
-  constructor(currentVersion, repo = 'ArdaG1/Squirrel') {
+  constructor(currentVersion, repo = 'ArdaGl1/Squirrel') {
     this.currentVersion = currentVersion || '2.0.0';
     this.repo = repo;
     this.latestRelease = null;

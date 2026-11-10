@@ -100,7 +100,7 @@ const configDir = resolveConfigDir();
 filterService.init(configDir);
 const watchedFoldersConfigPath = path.join(configDir, 'watched-folders.json');
 const quarantineConfigPath = path.join(configDir, 'quarantine.json');
-const updaterService = new UpdaterService('2.1.0', 'ArdaG1/Squirrel');
+const updaterService = new UpdaterService('2.1.0', 'ArdaGl1/Squirrel');
 
 const statsCacheConfigPath = path.join(configDir, 'stats-cache.json');
 const folderStatsCache = new Map();

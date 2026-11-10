@@ -2700,7 +2700,7 @@ const btnOpenGitHub = document.getElementById('btnOpenGitHub');
 if (btnOpenGitHub) {
   btnOpenGitHub.addEventListener('click', async () => {
     if (window.squirrel.openExternalUrl) {
-      await window.squirrel.openExternalUrl('https://github.com/ArdaG1/Squirrel');
+      await window.squirrel.openExternalUrl('https://github.com/ArdaGl1/Squirrel');
     }
   });
 }
