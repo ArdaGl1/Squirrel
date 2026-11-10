@@ -89,7 +89,7 @@ End the frustration of mystery sync failures with complete transparency and auto
 
 1. Clone or download the repository:
    ```bash
-   git clone https://github.com/<your-username>/Squirrel.git
+   git clone https://github.com/ArdaGl1/Squirrel.git
    cd Squirrel
    ```
 
