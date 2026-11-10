@@ -1,0 +1,73 @@
+{
+  "name": "squirrel",
+  "productName": "Squirrel",
+  "version": "2.1.0",
+  "description": "High-performance real-time cloud sync client (Google Drive, Dropbox, OneDrive, Mega, iCloud) for Desktop",
+  "main": "main.js",
+  "scripts": {
+    "postinstall": "node scripts/customize_exe.js",
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:all": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "build:installer": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.squirrel.app",
+    "productName": "Squirrel",
+    "copyright": "Copyright © 2026 Squirrel",
+    "directories": {
+      "output": "release"
+    },
+    "asar": true,
+    "files": [
+      "**/*",
+      "!release/**",
+      "!scratch/**",
+      "!scripts/**",
+      "!.git/**"
+    ],
+    "win": {
+      "icon": "icon/icon.ico",
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "legalTrademarks": "Squirrel"
+    },
+    "portable": {
+      "artifactName": "Squirrel-v${version}-Portable.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "guid": "b8800f56-e630-5cf1-9a98-77a3e8459db5",
+      "allowToChangeInstallationDirectory": false,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Squirrel",
+      "artifactName": "Squirrel-Setup-v${version}.exe",
+      "runAfterFinish": true
+    }
+  },
+  "keywords": [
+    "squirrel",
+    "drive-sync",
+    "file-watcher"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@googleapis/drive": "^27.0.0",
+    "@zip.js/zip.js": "^2.24.0",
+    "chokidar": "^4.0.3",
+    "google-auth-library": "^11.3.1",
+    "megajs": "^1.3.10"
+  },
+  "devDependencies": {
+    "electron": "^34.2.0",
+    "electron-builder": "^26.18.0",
+    "rcedit": "^5.0.2"
+  }
+}

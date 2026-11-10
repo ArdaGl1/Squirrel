@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squirrel</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="window-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Mac Window Controls (Traffic Lights) -->
+      <div class="window-titlebar">
+        <div class="mac-traffic-lights">
+          <button class="traffic-btn traffic-close" id="winCloseBtn" title="Close"></button>
+          <button class="traffic-btn traffic-minimize" id="winMinimizeBtn" title="Minimize"></button>
+          <button class="traffic-btn traffic-maximize" id="winMaximizeBtn" title="Maximize"></button>
+        </div>
+      </div>
+
+      <!-- App Brand & Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-avatar">
+          <img src="icon/icon.png" alt="Squirrel Logo" class="brand-img" />
+        </div>
+        <span class="brand-title">Squirrel</span>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="sidebar-search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="sidebarSearchInput" placeholder="Search folders & logs..." />
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-tab="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item active" data-tab="monitored-folders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Monitored Folders</span>
+        </button>
+
+        <button class="nav-item" data-tab="cloud-accounts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+          </svg>
+          <span>Cloud Accounts</span>
+          <span class="nav-dot" id="cloudNavDot" style="display: none;"></span>
+        </button>
+
+        <button class="nav-item" data-tab="exclusions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          <span>Exclusions & File Filters</span>
+        </button>
+
+        <button class="nav-item" data-tab="sync-history">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Sync History</span>
+          <span class="nav-badge" id="logCountNavBadge">0</span>
+        </button>
+
+        <button class="nav-item" data-tab="quarantine">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>Quarantine</span>
+          <span class="nav-badge quarantine-badge" id="quarantineNavBadge" style="display: none;">0</span>
+        </button>
+
+        <button class="nav-item" data-tab="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Update Banner (Shown below navigation when an update is ready) -->
+      <div class="sidebar-update-card" id="sidebarUpdateCard" style="display: none;">
+        <div class="update-card-inner">
+          <div class="update-header-row">
+            <div class="update-pulse-dot"></div>
+            <span class="update-label">Update Ready</span>
+            <span class="update-tag" id="sidebarUpdateTag">v2.1.0</span>
+          </div>
+          <p class="update-description" id="sidebarUpdateDesc">A new version of Squirrel is available.</p>
+          <button class="btn-sidebar-update" id="btnSidebarUpdateNow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span id="btnSidebarUpdateText">Install Update</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer & Account Profile -->
+      <div class="sidebar-footer">
+        <button class="footer-action-link" id="feedbackBtn" title="Send feedback to support@squirrelapp.com.tr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Feedback</span>
+        </button>
+
+        <div class="sidebar-status-indicator">
+          <div class="status-left">
+            <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span id="sidebarStatusText">Status: Monitoring Active</span>
+          </div>
+          <span class="status-dot-active" id="sidebarStatusDot"></span>
+        </div>
+
+        <div class="user-profile-card" id="userProfileCard" title="Manage Cloud Account">
+          <div class="user-avatar" id="userAvatar">S</div>
+          <div class="user-info">
+            <span class="user-name" id="userNameLabel">Account</span>
+            <span class="user-email" id="userEmailLabel">Not connected</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+      <!-- Top Drag Bar -->
+      <div class="main-top-drag-bar">
+        <div class="drag-region"></div>
+        <div class="top-bar-actions">
+          <button id="btnTopDiagnostics" class="btn btn-top-diagnostics" title="Sync Diagnostics & Why files didn't sync">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span id="topDiagnosticsText">Activity & Issues</span>
+            <span class="diagnostics-issue-badge" id="topDiagnosticsBadge" style="display: none;">0</span>
+          </button>
+          <button id="syncAllBtn" class="btn btn-top-sync" title="Sync all active folders with cloud now" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+            <span>Sync All</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 1: MONITORED FOLDERS -->
+      <section class="tab-view active" id="tab-monitored-folders">
+        <div class="view-header">
+          <h1 class="view-title">Monitored Folders</h1>
+          <p class="view-description">
+            Choose local folders to watch. Squirrel will immediately replicate any added, edited, or deleted files to your cloud.
+          </p>
+        </div>
+
+        <!-- Sync Issues Alert Banner (Shown when files could not sync) -->
+        <div class="sync-issues-alert-banner" id="syncIssuesAlertBanner" style="display: none;">
+          <div class="alert-banner-left">
+            <div class="alert-banner-icon">⚠️</div>
+            <div class="alert-banner-text">
+              <div class="alert-banner-title"><span id="alertBannerIssueCount">1</span> file(s) could not sync</div>
+              <div class="alert-banner-sub">Some files are locked by another app or encountered errors. Click to inspect why.</div>
+            </div>
+          </div>
+          <button class="btn-banner-action" id="btnOpenIssuesFromBanner">View Why & Fix →</button>
+        </div>
+
+        <!-- Section 1: Active Watchers -->
+        <div class="section-block">
+          <div class="section-header-row">
+            <h2 class="section-title">Active Watchers (<span id="activeWatchersCount">0</span>)</h2>
+          </div>
+
+          <div class="watchers-list" id="watchersListContainer">
+            <!-- Watcher cards populated dynamically -->
+          </div>
+
+          <button id="addFolderBtn" class="btn-add-folder-dashed">
+            <span class="plus-sign">+</span>
+            <span>Add Folder to Sync</span>
+          </button>
+        </div>
+
+        <!-- Overall Progress Card -->
+        <div class="sync-progress-card" id="syncProgressCard" style="display: none;">
+          <div class="sync-progress-info">
+            <div class="sync-info-left">
+              <span class="sync-spinner">🔄</span>
+              <span id="syncProgressText" class="sync-status-label">Uploading to cloud...</span>
+            </div>
+            <span id="syncProgressCount" class="sync-count-badge">0 / 0</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="syncProgressBarFill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Section 2: Configuration & Target -->
+        <div class="section-block">
+          <h2 class="section-title">Configuration & Target</h2>
+
+          <div class="config-target-card">
+            <!-- Row 1: Destination & Speed -->
+            <div class="config-section-title">Sync Destination & Speed</div>
+
+            <div class="config-row">
+              <span class="config-label">Primary Cloud</span>
+              <div class="dropdown-wrapper">
+                <button class="config-dropdown-btn" id="primaryCloudDropdownBtn">
+                  <span id="primaryCloudIcon" style="display: inline-flex; align-items: center;">
+                    <svg class="drive-icon-svg" viewBox="0 0 24 24">
+                      <path d="M7.71 3.5L1.15 15l3.43 6 6.56-11.5L7.71 3.5z" fill="#0066DA"/>
+                      <path d="M16.29 3.5H7.71l3.43 6h8.58l-3.43-6z" fill="#00AC47"/>
+                      <path d="M22.85 15l-3.43-6H10.84l3.43 6h8.58z" fill="#EA4335"/>
+                      <path d="M14.27 21H5.71l3.43-6h8.56l-3.43 6z" fill="#FFBA00"/>
+                    </svg>
+                  </span>
+                  <span id="primaryCloudLabel">Google Drive</span>
+                  <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="config-row">
+              <span class="config-label">Sync Priority</span>
+              <div class="dropdown-wrapper">
+                <button class="config-dropdown-btn" id="syncPriorityDropdownBtn">
+                  <span id="syncPriorityLabel">Smart (Low CPU)</span>
+                  <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="config-divider"></div>
+
+            <!-- Row 2: Recent Activity Mini Chart -->
+            <div class="config-section-title">Recent Activity Log</div>
+
+            <div class="config-row activity-row">
+              <span class="config-label">Sync Activity (Last 24 Hours)</span>
+              <div class="mini-bar-chart" id="miniBarChart">
+                <!-- 24 bar columns generated by JS -->
+              </div>
+              <span class="activity-summary-pill" id="activitySummaryText">0 B synced today</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: DASHBOARD -->
+      <section class="tab-view" id="tab-dashboard">
+        <div class="view-header">
+          <h1 class="view-title">Dashboard</h1>
+          <p class="view-description">Overview of active sync processes, files tracked, and storage metrics.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-title">Total Monitored Files</div>
+            <div class="stat-card-value" id="summaryTotalFiles">0</div>
+            <span class="stat-card-sub">Files currently tracked</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-title">Active Folders</div>
+            <div class="stat-card-value" id="summaryActiveFolders">0 / 3</div>
+            <span class="stat-card-sub" id="activeFoldersCountPill">0 Active</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-title">Total Data Size</div>
+            <div class="stat-card-value" id="summaryTotalSize">0 B</div>
+            <span class="stat-card-sub">Data replicated to cloud</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-title">Cloud Status</div>
+            <div class="stat-card-value" id="driveSummaryText" style="font-size: 16px;">Disconnected</div>
+            <div class="drive-status-badge" id="driveSummaryBadge" style="margin-top: 8px;">
+              <span class="drive-dot" id="driveSummaryDot"></span>
+              <span id="driveAccountEmail">Not connected</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: CLOUD ACCOUNTS -->
+      <section class="tab-view" id="tab-cloud-accounts">
+        <div class="view-header">
+          <h1 class="view-title">Cloud Accounts</h1>
+          <p class="view-description">Manage your cloud storage connections, OAuth credentials, and sync destinations.</p>
+        </div>
+
+        <div class="cloud-accounts-list" id="cloudAccountsList">
+          <!-- 1. Google Drive -->
+          <div class="cloud-account-card is-primary" id="cardCloudGoogleDrive">
+            <div class="cloud-card-header">
+              <div class="cloud-brand">
+                <svg class="cloud-icon-large" viewBox="0 0 24 24">
+                  <path d="M7.71 3.5L1.15 15l3.43 6 6.56-11.5L7.71 3.5z" fill="#0066DA"/>
+                  <path d="M16.29 3.5H7.71l3.43 6h8.58l-3.43-6z" fill="#00AC47"/>
+                  <path d="M22.85 15l-3.43-6H10.84l3.43 6h8.58z" fill="#EA4335"/>
+                  <path d="M14.27 21H5.71l3.43-6h8.56l-3.43 6z" fill="#FFBA00"/>
+                </svg>
+                <div>
+                  <div class="cloud-name-wrap">
+                    <h3 class="cloud-name">Google Drive</h3>
+                    <span class="cloud-primary-badge" id="primaryBadgeGoogleDrive">★ Primary</span>
+                  </div>
+                  <span class="cloud-folder-hint">Destination: Google Drive / Squirrel</span>
+                </div>
+              </div>
+              <div class="cloud-actions-group">
+                <button id="setPrimaryGoogleDrive" class="btn-set-primary" style="display: none;">Set as Primary</button>
+                <button id="openDriveModalBtn" class="btn btn-primary">
+                  Connect Google Drive
+                </button>
+                <div id="driveConnectedPill" class="drive-connected-pill" style="display: none;">
+                  <span class="drive-pill-dot"></span>
+                  <span id="drivePillEmail">user@gmail.com</span>
+                  <button id="disconnectDriveBtn" class="btn-disconnect" title="Disconnect">Disconnect</button>
+                </div>
+              </div>
+            </div>
+            <div class="cloud-card-footer">
+              <span>Connection: OAuth 2.0 (Official Google Drive API)</span>
+              <span id="cloudStatusTag">Status: Ready</span>
+            </div>
+          </div>
+
+          <!-- 2. Microsoft OneDrive -->
+          <div class="cloud-account-card" id="cardCloudOneDrive">
+            <div class="cloud-card-header">
+              <div class="cloud-brand">
+                <svg class="cloud-icon-large" viewBox="0 0 24 24">
+                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="#0078D4"/>
+                  <path d="M19 14c0-2.21-1.79-4-4-4-.34 0-.67.04-.98.13C13.43 8.33 11.61 7 9.5 7c-2.48 0-4.5 2.02-4.5 4.5 0 .28.03.55.08.82C3.23 12.82 2 14.26 2 16c0 2.21 1.79 4 4 4h13c1.66 0 3-1.34 3-3 0-1.4-.96-2.58-2.26-2.91.17-.34.26-.71.26-1.09z" fill="#28A8EA"/>
+                </svg>
+                <div>
+                  <div class="cloud-name-wrap">
+                    <h3 class="cloud-name">Microsoft OneDrive</h3>
+                    <span class="cloud-primary-badge" id="primaryBadgeOneDrive" style="display: none;">★ Primary</span>
+                  </div>
+                  <span class="cloud-folder-hint">Destination: OneDrive / Squirrel</span>
+                </div>
+              </div>
+              <div class="cloud-actions-group">
+                <button id="setPrimaryOneDrive" class="btn-set-primary" style="display: none;">Set as Primary</button>
+                <button id="connectOneDriveBtn" class="btn btn-primary" style="background: #0078D4;">
+                  Connect OneDrive
+                </button>
+                <div id="onedriveConnectedPill" class="drive-connected-pill" style="display: none;">
+                  <span class="drive-pill-dot"></span>
+                  <span id="onedrivePillEmail">user@outlook.com</span>
+                  <button id="disconnectOneDriveBtn" class="btn-disconnect" title="Disconnect">Disconnect</button>
+                </div>
+              </div>
+            </div>
+            <div class="cloud-card-footer">
+              <span>Connection: OAuth 2.0 (Microsoft Graph API)</span>
+              <span id="onedriveStatusTag">Status: Disconnected</span>
+            </div>
+          </div>
+
+          <!-- 3. Dropbox -->
+          <div class="cloud-account-card" id="cardCloudDropbox">
+            <div class="cloud-card-header">
+              <div class="cloud-brand">
+                <svg class="cloud-icon-large" viewBox="0 0 24 24">
+                  <path d="M6 2l6 3.82L6 9.64 0 5.82 6 2zm12 0l6 3.82-6 3.82-6-3.82L18 2zM0 13.45l6-3.81 6 3.81-6 3.82-6-3.82zm18-3.81l6 3.81-6 3.82-6-3.82 6-3.81zM6 18.73l6-3.82 6 3.82-6 3.82-6-3.82z" fill="#0061FF"/>
+                </svg>
+                <div>
+                  <div class="cloud-name-wrap">
+                    <h3 class="cloud-name">Dropbox</h3>
+                    <span class="cloud-primary-badge" id="primaryBadgeDropbox" style="display: none;">★ Primary</span>
+                  </div>
+                  <span class="cloud-folder-hint">Destination: Dropbox / Apps / Squirrel</span>
+                </div>
+              </div>
+              <div class="cloud-actions-group">
+                <button id="setPrimaryDropbox" class="btn-set-primary" style="display: none;">Set as Primary</button>
+                <button id="connectDropboxBtn" class="btn btn-primary" style="background: #0061FF;">
+                  Connect Dropbox
+                </button>
+                <div id="dropboxConnectedPill" class="drive-connected-pill" style="display: none;">
+                  <span class="drive-pill-dot"></span>
+                  <span id="dropboxPillEmail">user@dropbox.com</span>
+                  <button id="disconnectDropboxBtn" class="btn-disconnect" title="Disconnect">Disconnect</button>
+                </div>
+              </div>
+            </div>
+            <div class="cloud-card-footer">
+              <span>Connection: OAuth 2.0 (Dropbox API v2)</span>
+              <span id="dropboxStatusTag">Status: Disconnected</span>
+            </div>
+          </div>
+
+          <!-- 4. iCloud Drive -->
+          <div class="cloud-account-card" id="cardCloudICloud">
+            <div class="cloud-card-header">
+              <div class="cloud-brand">
+                <svg class="cloud-icon-large" viewBox="0 0 24 24">
+                  <defs>
+                    <linearGradient id="icloudGradCard" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#54C7FC"/>
+                      <stop offset="100%" stop-color="#007AFF"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="url(#icloudGradCard)"/>
+                </svg>
+                <div>
+                  <div class="cloud-name-wrap">
+                    <h3 class="cloud-name">iCloud Drive</h3>
+                    <span class="cloud-primary-badge" id="primaryBadgeICloud" style="display: none;">★ Primary</span>
+                  </div>
+                  <span class="cloud-folder-hint">Destination: iCloud Drive / Squirrel</span>
+                </div>
+              </div>
+              <div class="cloud-actions-group">
+                <button id="setPrimaryICloud" class="btn-set-primary" style="display: none;">Set as Primary</button>
+                <button id="connectICloudBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #007AFF, #54C7FC);">
+                  Connect iCloud
+                </button>
+                <div id="icloudConnectedPill" class="drive-connected-pill" style="display: none;">
+                  <span class="drive-pill-dot"></span>
+                  <span id="icloudPillEmail">user@icloud.com</span>
+                  <button id="disconnectICloudBtn" class="btn-disconnect" title="Disconnect">Disconnect</button>
+                </div>
+              </div>
+            </div>
+            <div class="cloud-card-footer">
+              <span>Connection: Apple ID / iCloud Storage</span>
+              <span id="icloudStatusTag">Status: Disconnected</span>
+            </div>
+          </div>
+
+          <!-- 5. Mega (MEGA.nz) -->
+          <div class="cloud-account-card" id="cardCloudMega">
+            <div class="cloud-card-header">
+              <div class="cloud-brand">
+                <svg class="cloud-icon-large" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="11" fill="#D9272E"/>
+                  <path d="M7 16V8l5 5 5-5v8h-2v-4.5l-3 3-3-3V16H7z" fill="#FFFFFF"/>
+                </svg>
+                <div>
+                  <div class="cloud-name-wrap">
+                    <h3 class="cloud-name">Mega (MEGA.nz)</h3>
+                    <span class="cloud-primary-badge" id="primaryBadgeMega" style="display: none;">★ Primary</span>
+                  </div>
+                  <span class="cloud-folder-hint">Destination: Mega / Squirrel</span>
+                </div>
+              </div>
+              <div class="cloud-actions-group">
+                <button id="setPrimaryMega" class="btn-set-primary" style="display: none;">Set as Primary</button>
+                <button id="connectMegaBtn" class="btn btn-primary" style="background: #D9272E;">
+                  Connect Mega
+                </button>
+                <div id="megaConnectedPill" class="drive-connected-pill" style="display: none;">
+                  <span class="drive-pill-dot"></span>
+                  <span id="megaPillEmail">user@mega.nz</span>
+                  <button id="disconnectMegaBtn" class="btn-disconnect" title="Disconnect">Disconnect</button>
+                </div>
+              </div>
+            </div>
+            <div class="cloud-card-footer">
+              <span>Connection: Mega End-to-End Encrypted Cloud API</span>
+              <span id="megaStatusTag">Status: Disconnected</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: EXCLUSIONS & FILE FILTERS -->
+      <section class="tab-view" id="tab-exclusions">
+        <div class="view-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+          <div>
+            <h1 class="view-title">Exclusions & File Filters</h1>
+            <p class="view-description">Control what Squirrel syncs. Excluded items are completely ignored to save bandwidth, cloud storage, and disk IO.</p>
+          </div>
+          <div id="filterStatusBadge" style="display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600; padding: 6px 14px; border-radius: 20px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; display: inline-block;"></span>
+            <span id="activeFilterCountText">29 Active Rules</span>
+          </div>
+        </div>
+
+        <div class="exclusions-container" style="display: flex; flex-direction: column; gap: 20px; max-width: 960px;">
+
+          <!-- SECTION 1: SMART PRESET FILTERS -->
+          <div class="settings-card" style="padding: 24px; background: #131620; border: 1px solid #232734; border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(168, 85, 247, 0.15); color: #c084fc; display: flex; align-items: center; justify-content: center; font-size: 18px;">⚡</div>
+                <div>
+                  <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin: 0;">Smart Preset Filters</h3>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">One-click filters for common developer folders, temporary junk, and heavy files.</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="presetFiltersContainer" style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- Dynamic Preset Rows injected here -->
+            </div>
+          </div>
+
+          <!-- SECTION 2: CUSTOM EXCLUSIONS -->
+          <div class="settings-card" style="padding: 24px; background: #131620; border: 1px solid #232734; border-radius: 14px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 18px;">🎯</div>
+              <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin: 0;">Custom Exclusion Rules</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Add custom filenames, extensions (e.g. <code>*.log</code>), or folders (e.g. <code>cache/</code>).</p>
+              </div>
+            </div>
+
+            <!-- Input Row -->
+            <form id="addCustomFilterForm" style="display: flex; gap: 10px; margin-top: 18px;">
+              <div style="position: relative; flex: 1;">
+                <input type="text" id="customFilterInput" placeholder="Enter rule (e.g. *.log, cache/, secret.txt, *.iso)..." class="form-input" style="width: 100%; height: 42px; background: #0f121a; border: 1px solid #232734; border-radius: 8px; padding: 0 14px; color: #fff; font-size: 13px;" />
+              </div>
+              <button type="submit" class="btn btn-primary" style="height: 42px; padding: 0 20px; font-size: 13px; font-weight: 600; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #fff;">
+                <span>+</span> Add Rule
+              </button>
+            </form>
+
+            <!-- Quick Add Chips -->
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px;">
+              <span style="font-size: 11.5px; color: var(--text-muted);">Quick Add:</span>
+              <button type="button" class="quick-chip" data-rule="*.log">+ *.log</button>
+              <button type="button" class="quick-chip" data-rule="cache/">+ cache/</button>
+              <button type="button" class="quick-chip" data-rule="*.exe">+ *.exe</button>
+              <button type="button" class="quick-chip" data-rule=".env">+ .env</button>
+              <button type="button" class="quick-chip" data-rule="*.psd">+ *.psd</button>
+              <button type="button" class="quick-chip" data-rule="*.mp4">+ *.mp4</button>
+            </div>
+
+            <!-- Active Custom Rules Container -->
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Active Custom Rules</span>
+                <span id="customRuleCountLabel" style="font-size: 11.5px; color: var(--text-muted);">0 rules</span>
+              </div>
+              <div id="customRulesList" style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; align-items: center;">
+                <!-- Tags will be dynamically injected here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: MAX FILE SIZE THRESHOLD -->
+          <div class="settings-card" style="padding: 24px; background: #131620; border: 1px solid #232734; border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(234, 179, 8, 0.15); color: #facc15; display: flex; align-items: center; justify-content: center; font-size: 18px;">⚖️</div>
+                <div>
+                  <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin: 0;">Maximum File Size Threshold</h3>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Automatically skip files larger than this size to protect cloud storage quota and network speed.</p>
+                </div>
+              </div>
+              <select id="maxFileSizeSelect" class="form-input" style="height: 38px; background: #0f121a; border: 1px solid #232734; border-radius: 8px; padding: 0 14px; color: #fff; font-size: 13px; outline: none; cursor: pointer; min-width: 220px;">
+                <option value="0">No limit (Sync all file sizes)</option>
+                <option value="100">Skip files larger than 100 MB</option>
+                <option value="250">Skip files larger than 250 MB</option>
+                <option value="500">Skip files larger than 500 MB</option>
+                <option value="1024">Skip files larger than 1 GB</option>
+                <option value="2048">Skip files larger than 2 GB</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- SECTION 4: LIVE FILTER TESTER -->
+          <div class="settings-card" style="padding: 24px; background: #131620; border: 1px solid #232734; border-radius: 14px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(34, 197, 94, 0.15); color: #4ade80; display: flex; align-items: center; justify-content: center; font-size: 18px;">🧪</div>
+              <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin: 0;">Live Filter Tester & Simulator</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Simulate and verify whether a specific file or folder path will be backed up or excluded.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="testFilterInput" placeholder="Test a path (e.g. src/app.log, node_modules/express, or file.tmp)..." class="form-input" style="flex: 1; min-width: 260px; height: 42px; background: #0f121a; border: 1px solid #232734; border-radius: 8px; padding: 0 14px; color: #fff; font-size: 13px;" />
+              <div id="testFilterResult" style="padding: 9px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 600; white-space: nowrap; display: none;">
+                <!-- Result badge -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 5: SYNC HISTORY -->
+      <section class="tab-view" id="tab-sync-history">
+        <div class="view-header-flex">
+          <div>
+            <h1 class="view-title">Sync History</h1>
+            <p class="view-description">Real-time activity of watched folders and cloud synchronization.</p>
+          </div>
+          <div class="history-actions">
+            <span class="log-count" id="logCountBadge">0 events</span>
+            <button id="clearLogBtn" class="btn btn-secondary btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="history-filter-bar">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="drive">Cloud Events</button>
+          <button class="filter-chip" data-filter="add">Added</button>
+          <button class="filter-chip" data-filter="unlink">Deleted</button>
+          <button class="filter-chip" data-filter="change">Updated</button>
+        </div>
+
+        <div class="log-container" id="logContainer">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🐿️</div>
+            <h3>No sync activity yet</h3>
+            <p>Whenever files in your monitored folders are added, modified, or deleted, real-time activity will show up here.</p>
+          </div>
+          <div class="log-list" id="logList"></div>
+        </div>
+      </section>
+
+      <!-- TAB: QUARANTINE & DELETION PROTECTION -->
+      <section class="tab-view" id="tab-quarantine">
+        <div class="view-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div class="header-left">
+            <h1 class="view-title">Quarantine & Protection</h1>
+            <p class="view-description">Accidentally deleted or missing folders are safely preserved in Google Drive's Quarantine.</p>
+          </div>
+          <div class="header-right">
+            <span class="quarantine-status-pill" id="quarantineStatusCount">0 Quarantined</span>
+          </div>
+        </div>
+
+        <div class="quarantine-container">
+          <!-- Information Shield Banner -->
+          <div class="quarantine-info-banner">
+            <div class="quarantine-banner-icon">🛡️</div>
+            <div class="quarantine-banner-text">
+              <div class="banner-title">Zero Data Loss Protection</div>
+              <div class="banner-desc">If a watched folder is deleted from your computer, Squirrel immediately isolates the cloud files into <b>Squirrel/Quarantine</b> on Google Drive. Your files are never lost and can be restored back to your PC with one click.</div>
+            </div>
+          </div>
+
+          <!-- Quarantined items list -->
+          <div class="quarantine-list" id="quarantineListContainer">
+            <!-- Populated dynamically by renderer.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: SETTINGS -->
+      <section class="tab-view" id="tab-settings">
+        <div class="view-header">
+          <h1 class="view-title">Settings</h1>
+          <p class="view-description">General application preferences, startup options, and sync engines.</p>
+        </div>
+
+        <!-- Group 1: Sync & Startup Preferences -->
+        <div class="settings-group-header">SYNC & STARTUP</div>
+        <div class="settings-group-card">
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Automatic Startup Reconcile</span>
+                <span class="settings-row-desc">Automatically check and sync differences between local folders and cloud storage on startup.</span>
+              </div>
+            </div>
+            <label class="macos-switch">
+              <input type="checkbox" id="autoReconcileToggle" checked />
+              <span class="macos-switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Sync Desktop Notifications</span>
+                <span class="settings-row-desc">Show desktop notifications when sync operations complete or encounter errors.</span>
+              </div>
+            </div>
+            <label class="macos-switch">
+              <input type="checkbox" id="syncNotificationsToggle" checked />
+              <span class="macos-switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <line x1="6" y1="12" x2="18" y2="12"></line>
+                  <polyline points="12 16 16 12 12 8"></polyline>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Minimize to System Tray</span>
+                <span class="settings-row-desc">Keep Squirrel running and syncing in the background when the window is closed or minimized.</span>
+              </div>
+            </div>
+            <label class="macos-switch">
+              <input type="checkbox" id="closeToTrayToggle" checked />
+              <span class="macos-switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                  <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Launch on System Startup</span>
+                <span class="settings-row-desc">Automatically launch Squirrel minimized in the system tray when Windows boots.</span>
+              </div>
+            </div>
+            <label class="macos-switch">
+              <input type="checkbox" id="launchOnStartupToggle" />
+              <span class="macos-switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-emerald">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Active Kernel Watcher</span>
+                <span class="settings-row-desc">Sub-millisecond file modification tracking powered by native kernel events.</span>
+              </div>
+            </div>
+            <span class="macos-badge success">Active</span>
+          </div>
+        </div>
+
+        <!-- Group 2: Application Info -->
+        <div class="settings-group-header">APPLICATION INFO</div>
+        <div class="settings-group-card">
+          <!-- App Hero Banner -->
+          <div class="settings-app-hero">
+            <div class="settings-app-logo">
+              <img src="icon/icon.png" alt="Squirrel Logo" />
+            </div>
+            <div class="settings-app-details">
+              <div class="settings-app-name-wrap">
+                <h2 class="settings-app-name">Squirrel</h2>
+                <span class="macos-badge beta">v2.1.0 Beta</span>
+              </div>
+              <p class="settings-app-desc">High-performance multi-cloud folder synchronization engine.</p>
+            </div>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-slate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="14" x2="23" y2="14"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="14" x2="4" y2="14"></line>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Runtime & Architecture</span>
+                <span class="settings-row-desc">Electron v34 • Node.js v24 • Chromium v132</span>
+              </div>
+            </div>
+            <span class="macos-badge">x64</span>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-emerald">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Software Updates</span>
+                <span class="settings-row-desc" id="settingsUpdateStatusText">Up to date • v2.1.0 Beta</span>
+              </div>
+            </div>
+            <button class="macos-btn-secondary" id="btnCheckUpdatesManual">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              Check Now
+            </button>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Open Source License</span>
+                <span class="settings-row-desc">Free software licensed under the MIT Open Source License.</span>
+              </div>
+            </div>
+            <span class="macos-badge info">MIT</span>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Configuration Directory</span>
+                <span class="settings-row-desc">Local storage containing app preferences, tokens, and sync state.</span>
+              </div>
+            </div>
+            <button class="macos-btn-secondary" id="btnOpenConfigDir">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              Open Folder
+            </button>
+          </div>
+
+          <div class="settings-row-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-icon-badge bg-slate">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 17px; height: 17px;">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+                </svg>
+              </div>
+              <div class="settings-row-info">
+                <span class="settings-row-title">Source Code & Updates</span>
+                <span class="settings-row-desc">Official open-source repository on GitHub.</span>
+              </div>
+            </div>
+            <button class="macos-btn-secondary" id="btnOpenGitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              View on GitHub
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hidden fallbacks for backward compatibility -->
+      <div style="display: none;" id="folderSlotsContainer"></div>
+      <div style="display: none;" id="addSlotBtn"></div>
+      <span style="display: none;" id="footerStatus"></span>
+    </main>
+  </div>
+
+  <!-- MANAGE DROPDOWN MENU -->
+  <div class="manage-dropdown-menu" id="manageDropdownMenu" style="display: none;">
+    <button class="dropdown-item" id="manageOpenExplorer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+      <span>Open in Explorer</span>
+    </button>
+    <button class="dropdown-item" id="manageSyncNow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+      <span>Sync Now</span>
+    </button>
+    <button class="dropdown-item" id="manageChangeFolder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+      </svg>
+      <span>Change Folder</span>
+    </button>
+    <button class="dropdown-item" id="manageToggleVault">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      <span id="manageVaultLabel">Vault Encryption (AES-256)...</span>
+    </button>
+    <button class="dropdown-item" id="manageDecryptFolder" style="display: none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+      </svg>
+      <span>🔓 Decrypt Folder to PC...</span>
+    </button>
+    <button class="dropdown-item" id="manageVersionHistory">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span>File Version History (Time Machine)...</span>
+    </button>
+    <button class="dropdown-item" id="manageDiagnostics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>Sync Activity & Issues...</span>
+    </button>
+    <div class="dropdown-divider"></div>
+    <button class="dropdown-item item-danger" id="manageRemoveFolder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      <span>Stop Watching & Delete from Cloud</span>
+    </button>
+  </div>
+
+  <!-- CPU & SYNC PRIORITY FLOATING DROPDOWN MENU -->
+  <div class="priority-dropdown-menu" id="priorityDropdownMenu" style="display: none;">
+    <div class="priority-item active" data-priority="smart" id="priorityItemSmart">
+      <div class="priority-item-header">
+        <span class="priority-dot dot-green"></span>
+        <span class="priority-name">Smart (Low CPU)</span>
+        <span class="priority-check" id="checkSmart">✓</span>
+      </div>
+      <div class="priority-desc">100ms throttle. Smooth performance, uses under 1% CPU. (Recommended)</div>
+    </div>
+    <div class="priority-item" data-priority="turbo" id="priorityItemTurbo">
+      <div class="priority-item-header">
+        <span class="priority-dot dot-blue"></span>
+        <span class="priority-name">High Speed (Turbo)</span>
+        <span class="priority-check" id="checkTurbo"></span>
+      </div>
+      <div class="priority-desc">No delay between files. Maximum network and disk throughput.</div>
+    </div>
+    <div class="priority-item" data-priority="eco" id="priorityItemEco">
+      <div class="priority-item-header">
+        <span class="priority-dot dot-yellow"></span>
+        <span class="priority-name">Battery Saver (Eco)</span>
+        <span class="priority-check" id="checkEco"></span>
+      </div>
+      <div class="priority-desc">350ms throttle. Conserves battery and minimizes background network traffic.</div>
+    </div>
+  </div>
+
+  <!-- PRIMARY CLOUD SELECTION FLOATING DROPDOWN MENU -->
+  <div class="primary-cloud-dropdown-menu" id="primaryCloudDropdownMenu" style="display: none;">
+    <!-- Google Drive -->
+    <div class="cloud-menu-item active" data-cloud="google-drive" id="cloudItemGoogleDrive">
+      <div class="cloud-menu-item-header">
+        <div class="cloud-menu-icon">
+          <svg class="cloud-icon-svg" viewBox="0 0 24 24">
+            <path d="M7.71 3.5L1.15 15l3.43 6 6.56-11.5L7.71 3.5z" fill="#0066DA"/>
+            <path d="M16.29 3.5H7.71l3.43 6h8.58l-3.43-6z" fill="#00AC47"/>
+            <path d="M22.85 15l-3.43-6H10.84l3.43 6h8.58z" fill="#EA4335"/>
+            <path d="M14.27 21H5.71l3.43-6h8.56l-3.43 6z" fill="#FFBA00"/>
+          </svg>
+        </div>
+        <div class="cloud-menu-info">
+          <span class="cloud-menu-name">Google Drive</span>
+          <span class="cloud-menu-status" id="cloudMenuStatusGoogleDrive">Disconnected</span>
+        </div>
+        <span class="priority-check" id="checkCloudGoogleDrive">✓</span>
+      </div>
+    </div>
+    <!-- Microsoft OneDrive -->
+    <div class="cloud-menu-item" data-cloud="onedrive" id="cloudItemOneDrive">
+      <div class="cloud-menu-item-header">
+        <div class="cloud-menu-icon">
+          <svg class="cloud-icon-svg" viewBox="0 0 24 24">
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="#0078D4"/>
+            <path d="M19 14c0-2.21-1.79-4-4-4-.34 0-.67.04-.98.13C13.43 8.33 11.61 7 9.5 7c-2.48 0-4.5 2.02-4.5 4.5 0 .28.03.55.08.82C3.23 12.82 2 14.26 2 16c0 2.21 1.79 4 4 4h13c1.66 0 3-1.34 3-3 0-1.4-.96-2.58-2.26-2.91.17-.34.26-.71.26-1.09z" fill="#28A8EA"/>
+          </svg>
+        </div>
+        <div class="cloud-menu-info">
+          <span class="cloud-menu-name">Microsoft OneDrive</span>
+          <span class="cloud-menu-status" id="cloudMenuStatusOneDrive">Disconnected</span>
+        </div>
+        <span class="priority-check" id="checkCloudOneDrive"></span>
+      </div>
+    </div>
+    <!-- Dropbox -->
+    <div class="cloud-menu-item" data-cloud="dropbox" id="cloudItemDropbox">
+      <div class="cloud-menu-item-header">
+        <div class="cloud-menu-icon">
+          <svg class="cloud-icon-svg" viewBox="0 0 24 24">
+            <path d="M6 2l6 3.82L6 9.64 0 5.82 6 2zm12 0l6 3.82-6 3.82-6-3.82L18 2zM0 13.45l6-3.81 6 3.81-6 3.82-6-3.82zm18-3.81l6 3.81-6 3.82-6-3.82 6-3.81zM6 18.73l6-3.82 6 3.82-6 3.82-6-3.82z" fill="#0061FF"/>
+          </svg>
+        </div>
+        <div class="cloud-menu-info">
+          <span class="cloud-menu-name">Dropbox</span>
+          <span class="cloud-menu-status" id="cloudMenuStatusDropbox">Disconnected</span>
+        </div>
+        <span class="priority-check" id="checkCloudDropbox"></span>
+      </div>
+    </div>
+    <!-- iCloud Drive -->
+    <div class="cloud-menu-item" data-cloud="icloud" id="cloudItemICloud">
+      <div class="cloud-menu-item-header">
+        <div class="cloud-menu-icon">
+          <svg class="cloud-icon-svg" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="icloudGradMenu" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#54C7FC"/>
+                <stop offset="100%" stop-color="#007AFF"/>
+              </linearGradient>
+            </defs>
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="url(#icloudGradMenu)"/>
+          </svg>
+        </div>
+        <div class="cloud-menu-info">
+          <span class="cloud-menu-name">iCloud Drive</span>
+          <span class="cloud-menu-status" id="cloudMenuStatusICloud">Disconnected</span>
+        </div>
+        <span class="priority-check" id="checkCloudICloud"></span>
+      </div>
+    </div>
+    <!-- Mega -->
+    <div class="cloud-menu-item" data-cloud="mega" id="cloudItemMega">
+      <div class="cloud-menu-item-header">
+        <div class="cloud-menu-icon">
+          <svg class="cloud-icon-svg" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="11" fill="#D9272E"/>
+            <path d="M7 16V8l5 5 5-5v8h-2v-4.5l-3 3-3-3V16H7z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="cloud-menu-info">
+          <span class="cloud-menu-name">Mega (MEGA.nz)</span>
+          <span class="cloud-menu-status" id="cloudMenuStatusMega">Disconnected</span>
+        </div>
+        <span class="priority-check" id="checkCloudMega"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE DRIVE CONNECTION MODAL -->
+  <div class="modal-backdrop" id="driveModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon">☁️</div>
+          <div>
+            <h3>Connect Google Drive</h3>
+            <span class="modal-subtitle">Link Squirrel with your Google Drive in one click</span>
+          </div>
+        </div>
+        <button id="closeDriveModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-info-box" style="margin-bottom: 16px;">
+          <span class="info-icon">🔒</span>
+          <span>Squirrel connects via official Google OAuth 2.0. Click below to sign in via your web browser. Files will sync directly to the <strong>Squirrel</strong> folder on your Google Drive.</span>
+        </div>
+
+        <button id="btnGoogleOneClick" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; padding: 14px 20px; font-size: 15px; border-radius: 9px; background: #2563eb; box-shadow: 0 4px 16px rgba(37,99,235,0.4); margin-bottom: 14px;">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path d="M7.71 3.5L1.15 15l3.43 6 6.56-11.5L7.71 3.5z" fill="#FFFFFF"/>
+            <path d="M16.29 3.5H7.71l3.43 6h8.58l-3.43-6z" fill="#FFFFFF" fill-opacity="0.85"/>
+            <path d="M22.85 15l-3.43-6H10.84l3.43 6h8.58z" fill="#FFFFFF" fill-opacity="0.7"/>
+            <path d="M14.27 21H5.71l3.43-6h8.56l-3.43 6z" fill="#FFBA00"/>
+          </svg>
+          <span id="btnGoogleOneClickText">Sign In with Google</span>
+        </button>
+
+        <details class="help-details" style="margin-top: 10px;">
+          <summary>⚙️ Advanced: Use Custom OAuth Credentials</summary>
+          <div class="help-content" style="padding-top: 10px;">
+            <p class="method-desc" style="font-size: 12px; margin-bottom: 8px;">Select custom <code>credentials.json</code> file or enter your own Google Cloud Client ID:</p>
+            <button id="loadCredentialsFileBtn" class="btn btn-secondary btn-full" style="margin-bottom: 10px;">
+              📁 Select credentials.json File...
+            </button>
+            <div class="form-group">
+              <label for="clientIdInput" style="font-size: 11px;">Client ID:</label>
+              <input type="text" id="clientIdInput" placeholder="xxxxxx.apps.googleusercontent.com" style="font-size: 12px;" />
+            </div>
+            <div class="form-group">
+              <label for="clientSecretInput" style="font-size: 11px;">Client Secret:</label>
+              <input type="password" id="clientSecretInput" placeholder="GOCSPX-xxxxxx" style="font-size: 12px;" />
+            </div>
+            <button id="saveManualCredsBtn" class="btn btn-secondary btn-full">
+              💾 Save Custom Credentials
+            </button>
+          </div>
+        </details>
+      </div>
+
+      <div class="modal-footer">
+        <button id="cancelModalBtn" class="btn btn-text">Cancel</button>
+        <button id="startAuthBtn" class="btn btn-primary" style="display: none;">
+          Sign In with Google
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTI-CLOUD CONNECTION MODAL (Dropbox, OneDrive, Mega, iCloud) -->
+  <div class="modal-backdrop" id="cloudConnectModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div id="cloudModalIconWrapper" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px;"></div>
+          <div>
+            <h3 id="cloudModalTitle">Connect Cloud Service</h3>
+            <span class="modal-subtitle" id="cloudModalSubtitle">Pair Squirrel with your cloud account</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="closeCloudConnectModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-info-box" id="cloudModalInfoBox">
+          <span class="info-icon">💡</span>
+          <span id="cloudModalInfoText">Enter your account details to connect. Files will synchronize directly to the "Squirrel" folder under this provider.</span>
+        </div>
+
+        <!-- 1-Click Official Web Auth Section (For Dropbox & OneDrive) -->
+        <div id="cloudWebAuthSection" style="display: none; flex-direction: column; gap: 12px; margin-bottom: 8px;">
+          <button type="button" class="btn btn-primary" id="btnCloudWebAuth" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; padding: 13px 18px; font-size: 14px; border-radius: 8px; background: #2563eb; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
+            <span id="btnCloudWebAuthText">Sign In with Official Web Site</span>
+          </button>
+          <div style="font-size: 12px; color: #94a3b8; text-align: center; line-height: 1.5; padding: 4px 10px;">
+            🔒 Fast browser sign-in. Your files will be synced directly to the Squirrel directory.
+          </div>
+        </div>
+
+        <div id="cloudModalDivider" style="display: none; align-items: center; text-align: center; margin: 12px 0; color: #64748b; font-size: 11px; text-transform: uppercase;">
+          <span style="flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1);"></span>
+          <span style="padding: 0 10px;">OR</span>
+          <span style="flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1);"></span>
+        </div>
+
+        <form id="cloudConnectForm">
+          <input type="hidden" id="connectCloudId" value="">
+
+          <div class="form-group" id="groupCloudEmail">
+            <label class="form-label" id="labelCloudEmail">Email</label>
+            <input
+              type="text"
+              id="inputCloudEmail"
+              class="form-input"
+              placeholder="user@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group" id="groupCloudSecret">
+            <label class="form-label" id="labelCloudSecret">Password</label>
+            <input
+              type="password"
+              id="inputCloudSecret"
+              class="form-input"
+              placeholder="Password"
+            />
+          </div>
+
+          <!-- Advanced Developer Settings Toggle -->
+          <div id="cloudAdvancedToggleWrap" style="display: none; margin: 8px 0;">
+            <a href="#" id="toggleCloudAdvanced" style="font-size: 11.5px; color: #64748b; text-decoration: none;">⚙️ Advanced Developer Settings (App Key / Token) ▾</a>
+          </div>
+
+          <div id="cloudAdvancedSection" style="display: none; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+            <div class="form-group" id="groupCloudKey" style="margin-bottom: 8px;">
+              <label class="form-label" id="labelCloudKey" style="font-size: 11px;">Custom Client ID / App Key (Optional)</label>
+              <input type="text" id="inputCloudKey" class="form-input" style="font-size: 12px;" placeholder="Custom App Key" />
+            </div>
+            <div class="form-group" id="groupCloudToken" style="margin-bottom: 0;">
+              <label class="form-label" id="labelCloudToken" style="font-size: 11px;">Manual Access Token (Optional)</label>
+              <input type="password" id="inputCloudToken" class="form-input" style="font-size: 12px;" placeholder="Paste generated token directly" />
+            </div>
+          </div>
+
+          <div id="cloudModalError" style="display: none; color: #ef4444; font-size: 13px; margin-top: 10px; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px;"></div>
+
+          <div class="modal-footer" id="cloudModalFooter" style="padding: 16px 0 0 0; border-top: 1px solid var(--border-subtle); margin-top: 18px;">
+            <button type="button" class="btn btn-text" id="cancelCloudConnectBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submitCloudConnectBtn">Sign In & Connect</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQUIRREL VAULT CONFIG MODAL -->
+  <div class="modal-backdrop" id="vaultModal" style="display: none;">
+    <div class="modal-card" style="width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon" style="font-size: 20px; width: 34px; height: 34px; background: linear-gradient(135deg, #a855f7, #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">🔒</div>
+          <div>
+            <h3>Squirrel Vault (AES-256)</h3>
+            <span class="modal-subtitle" id="vaultModalFolderName">Folder Encryption Settings</span>
+          </div>
+        </div>
+        <button id="closeVaultModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-info-box" style="margin-bottom: 12px; background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.25);">
+          <span class="info-icon">🛡️</span>
+          <div>
+            <strong style="color: #e9d5ff;">Zero-Knowledge & Open Standard (AES-256)</strong>
+            <p style="margin-top: 4px; font-size: 11px; line-height: 1.4; color: var(--text-muted);">
+              Files are encrypted before leaving your PC. In the cloud, they are standard WinZip AES-256 archives. You can decrypt them anytime on any phone or PC using <strong>7-Zip</strong>, <strong>WinRAR</strong>, or the offline Decryptor tool.
+            </p>
+          </div>
+        </div>
+
+        <div id="vaultToggleRow" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: 10px; user-select: none;">
+          <div>
+            <div style="font-size: 13.5px; font-weight: 600; color: #fff;">Enable Vault Encryption</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Upload files in this folder as encrypted AES-256 archives</div>
+          </div>
+          <label class="macos-switch" style="pointer-events: auto;">
+            <input type="checkbox" id="vaultEnableToggle">
+            <span class="macos-switch-slider"></span>
+          </label>
+        </div>
+
+        <div id="vaultPasswordContainer" style="display: none; margin-top: 12px; flex-direction: column; gap: 12px;">
+          <div class="form-group" style="margin: 0;">
+            <label style="font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; display: block;">Master Password</label>
+            <input type="password" id="vaultPasswordInput" class="form-input" placeholder="Enter a secure password for this folder">
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label style="font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; display: block;">Confirm Password</label>
+            <input type="password" id="vaultConfirmPasswordInput" class="form-input" placeholder="Repeat your password">
+          </div>
+          <div style="font-size: 11.5px; color: #fbbf24; background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.2); padding: 9px 12px; border-radius: 8px; line-height: 1.4;">
+            ⚠️ <strong>Important:</strong> Password is stored strictly on your device. Squirrel never uploads your keys to any server. Keep your password safe.
+          </div>
+        </div>
+
+        <div id="vaultStatusMessage" style="display: none; font-size: 12px; padding: 8px 10px; border-radius: 6px; margin-top: 10px;"></div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;">
+        <button id="btnExportDecryptor" type="button" class="btn btn-text" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #c084fc; text-decoration: none; padding: 6px 10px; border-radius: 6px; background: rgba(168, 85, 247, 0.1);" title="Save standalone offline HTML decryptor">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Offline Decryptor Tool (.html)</span>
+        </button>
+        <div style="display: flex; gap: 10px;">
+          <button id="cancelVaultModalBtn" type="button" class="btn btn-text">Cancel</button>
+          <button id="saveVaultSettingsBtn" type="button" class="btn btn-primary" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 600; padding: 8px 16px; border-radius: 6px;">Save Vault</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FILE VERSION HISTORY (TIME MACHINE) -->
+  <div class="modal-backdrop modal-overlay" id="versionHistoryModal" style="display: none; z-index: 2500;">
+    <div class="modal-card modal-card-large" style="width: 640px; max-width: 92vw; background: #16181f; border: 1px solid #2d3240; border-radius: 16px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            🕒
+          </div>
+          <div>
+            <h2 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">File Version History (Time Machine)</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="versionModalFolderLabel">Folder: -</p>
+          </div>
+        </div>
+        <button id="btnCloseVersionModal" class="modal-close-btn" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 4px 8px; line-height: 1;">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px;">
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;" for="versionFileSelect">Select File to Inspect Versions:</label>
+          <select id="versionFileSelect" class="form-input" style="width: 100%; background: #0e1017; border: 1px solid #2d3240; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 13px; outline: none;">
+            <option value="">Select a file...</option>
+          </select>
+        </div>
+
+        <div id="versionTimelineContainer" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+          <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px;">
+            Select a file above to view its saved versions on Google Drive.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.06);">
+        <button id="btnCloseVersionModalFooter" type="button" class="btn btn-text">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SYNC DIAGNOSTICS & ISSUES INSPECTOR ("Why didn't it sync?") -->
+  <div class="modal-backdrop modal-overlay" id="syncDiagnosticsModal" style="display: none; z-index: 2500;">
+    <div class="modal-card modal-card-large diagnostics-modal-card" style="width: 760px; max-width: 94vw; max-height: 88vh; background: #16181f; border: 1px solid #2d3240; border-radius: 16px; display: flex; flex-direction: column;">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #60a5fa;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #fff;">Sync Diagnostics & Issues</h3>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #94a3b8;">Real-time queue transparency and root-cause explanations for unsynced files</p>
+          </div>
+        </div>
+        <button id="btnCloseDiagnosticsModal" type="button" class="btn-icon" style="background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- Quick Metrics Summary Bar -->
+      <div class="diagnostics-metrics-bar">
+        <div class="diag-metric-item" id="diagMetricIssues">
+          <span class="diag-metric-icon">⚠️</span>
+          <div class="diag-metric-data">
+            <span class="diag-metric-num" id="diagCountIssues">0</span>
+            <span class="diag-metric-label">Issues & Blocked</span>
+          </div>
+        </div>
+        <div class="diag-metric-item" id="diagMetricQueue">
+          <span class="diag-metric-icon">⏳</span>
+          <div class="diag-metric-data">
+            <span class="diag-metric-num" id="diagCountQueue">0</span>
+            <span class="diag-metric-label">In Queue</span>
+          </div>
+        </div>
+        <div class="diag-metric-item" id="diagMetricActive">
+          <span class="diag-metric-icon">⚡</span>
+          <div class="diag-metric-data">
+            <span class="diag-metric-num" id="diagCountActive">0</span>
+            <span class="diag-metric-label">Active Operations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Switcher Navigation -->
+      <div class="diagnostics-nav-tabs">
+        <button class="diag-tab-btn active" data-diag-tab="issues" id="tabBtnDiagIssues">
+          <span>Why Didn't It Sync? (Issues)</span>
+          <span class="diag-tab-badge badge-issues" id="diagTabBadgeIssues" style="display: none;">0</span>
+        </button>
+        <button class="diag-tab-btn" data-diag-tab="queue" id="tabBtnDiagQueue">
+          <span>Live Queue & Transfers</span>
+          <span class="diag-tab-badge badge-queue" id="diagTabBadgeQueue" style="display: none;">0</span>
+        </button>
+        <button class="diag-tab-btn" data-diag-tab="history" id="tabBtnDiagHistory">
+          <span>Recent Sync History</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="modal-body diagnostics-modal-body" style="padding: 16px 24px; overflow-y: auto; flex: 1;">
+        
+        <!-- TAB 1: ISSUES & BLOCKED FILES -->
+        <div class="diag-tab-pane active" id="paneDiagIssues">
+          <div class="diag-pane-header">
+            <div class="diag-pane-info">
+              <span class="diag-pane-subtitle">Files that encountered locks, network timeouts, or exceeded filter limits:</span>
+            </div>
+            <div class="diag-pane-actions">
+              <button class="btn btn-sm btn-outline" id="btnDiagRetryAll" style="display: none;">🔄 Retry All Issues</button>
+              <button class="btn btn-sm btn-text" id="btnDiagClearResolved" style="display: none;">Clear Filtered</button>
+            </div>
+          </div>
+
+          <div class="diag-issues-list" id="diagIssuesList">
+            <!-- Dynamic issues or empty state -->
+          </div>
+        </div>
+
+        <!-- TAB 2: LIVE QUEUE & TRANSFERS -->
+        <div class="diag-tab-pane" id="paneDiagQueue" style="display: none;">
+          <div class="diag-section-title">Active Folder Operations</div>
+          <div class="diag-active-ops-list" id="diagActiveOpsList">
+            <!-- Dynamic active operations -->
+          </div>
+
+          <div class="diag-section-title" style="margin-top: 18px;">Pending Upload Queue</div>
+          <div class="diag-queue-list" id="diagQueueList">
+            <!-- Dynamic queued tasks -->
+          </div>
+        </div>
+
+        <!-- TAB 3: RECENT SYNC HISTORY -->
+        <div class="diag-tab-pane" id="paneDiagHistory" style="display: none;">
+          <div class="diag-pane-header">
+            <span class="diag-pane-subtitle">Live log of recently synchronized files:</span>
+          </div>
+          <div class="diag-history-list" id="diagHistoryList">
+            <!-- Dynamic recent sync events -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-top: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
+        <div class="diag-footer-hint" style="font-size: 11px; color: #64748b;">
+          💡 Locked files (like FL Studio .flp or open project files) will automatically sync as soon as you save and close them.
+        </div>
+        <button id="btnCloseDiagnosticsModalFooter" type="button" class="btn btn-text">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QUARANTINE ALERT TOAST NOTIFICATION -->
+  <div class="quarantine-alert-toast" id="quarantineAlertToast" style="display: none;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="font-size: 24px;">🛡️</div>
+      <div>
+        <div style="font-size: 13px; font-weight: 700; color: #fff;">Deletion Protection Active</div>
+        <div style="font-size: 12px; color: #cbd5e1;" id="quarantineAlertDesc">A watched folder was deleted locally. Backups were safely moved to Drive Quarantine.</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="btnGoToQuarantine" style="background: #38bdf8; color: #0f172a; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">View Quarantine</button>
+      <button id="btnDismissQuarantineAlert" style="background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; padding: 4px;">✕</button>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+@echo off
+title Squirrel Baslatiliyor...
+npm start
